@@ -1,0 +1,36 @@
+version: '3.6'
+
+services:
+
+  # Backend API
+  smart-brain-api:
+    container_name: backend
+    build: ./
+    command: npm start
+    working_dir: /usr/src/smart-brain-api
+    environment:
+      # URI should work because we created the database environment in postgres (look below)
+      # but unfortunately it doesn't. It probably because of the postgres ip address is not 127:0:0:1
+      # POSTGRES_URI: postgres://vitri:rahasia@localhost:5432/smart-brain-docker
+      # but this works
+      POSTGRES_USER: vitri
+      POSTGRES_PASSWORD: rahasia
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES_HOST: postgres
+    links:
+      - postgres
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/src/smart-brain-api
+
+  # Postgres
+  postgres:
+    environment:
+      POSTGRES_USER: vitri
+      POSTGRES_PASSWORD: rahasia
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES_HOST: postgres
+    build: ./postgres
+    ports:
+      - "5432:5432"
